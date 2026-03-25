@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
+import GUI from "lil-gui";
 import { New } from "./New";
 import FrontLight from "./FrontLight";
 import Particles from "./Particles";
@@ -34,6 +35,61 @@ const TreeProximityWatcher = ({ modelGroupRef, onChange }) => {
     return null;
 };
 
+const WorldSpinDebugger = ({ modelGroupRef }) => {
+    const spinStateRef = useRef({
+        active: false,
+        startY: 0,
+        elapsed: 0,
+        duration: 12,
+    });
+    const controlsRef = useRef({ spinDuration: 12 });
+
+    useEffect(() => {
+        const gui = new GUI({ title: "World Debug" });
+        gui.domElement.style.position = "fixed";
+        gui.domElement.style.top = "0px";
+        gui.domElement.style.right = "0px";
+        gui.domElement.style.zIndex = "40";
+        const actions = {
+            spinOnce: () => {
+                if (!modelGroupRef.current) return;
+
+                const spinState = spinStateRef.current;
+                spinState.startY = modelGroupRef.current.rotation.y;
+                spinState.elapsed = 0;
+                spinState.duration = controlsRef.current.spinDuration;
+                spinState.active = true;
+            },
+        };
+
+        gui.add(controlsRef.current, "spinDuration", 6, 30, 1).name("Spin Duration (s)");
+        gui.add(actions, "spinOnce").name("Spin Once");
+
+        return () => {
+            gui.destroy();
+        };
+    }, [modelGroupRef]);
+
+    useFrame((_, delta) => {
+        if (!modelGroupRef.current) return;
+
+        const spinState = spinStateRef.current;
+        if (!spinState.active) return;
+
+        spinState.elapsed += delta;
+        const progress = Math.min(spinState.elapsed / spinState.duration, 1);
+
+        modelGroupRef.current.rotation.y = spinState.startY + progress * Math.PI * 2;
+
+        if (progress >= 1) {
+            spinState.active = false;
+            modelGroupRef.current.rotation.y = spinState.startY + Math.PI * 2;
+        }
+    });
+
+    return null;
+};
+
 const FrontModel = ({ ambientColor = "#ffd700", spotColor = "#ffcc00", onTreeProximityChange, onDisplayClick }) =>{
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
     const modelGroupRef = useRef(null);
@@ -55,6 +111,7 @@ const FrontModel = ({ ambientColor = "#ffd700", spotColor = "#ffcc00", onTreePro
             <FrontLight ambientColor={ambientColor} spotColor={spotColor} />
             <Particles count={500} />
             <TreeProximityWatcher modelGroupRef={modelGroupRef} onChange={onTreeProximityChange} />
+            <WorldSpinDebugger modelGroupRef={modelGroupRef} />
 
             <group
             ref={modelGroupRef}

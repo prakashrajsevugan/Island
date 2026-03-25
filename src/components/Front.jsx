@@ -1,26 +1,13 @@
 import { useState } from "react";
-import Button from "./Button";
 import FrontModel from "./FrontModel/FrontModel";
 
 const Front = () =>{
-    const lightPresets = [
-        { name: "Warm", ambient: "#ffd86b", spot: "#ffcc00" },
-        { name: "Cool", ambient: "#b8d4ff", spot: "#84b6ff" },
-        { name: "Sunset", ambient: "#ffb38a", spot: "#ff7b54" },
-    ];
-
-    const [presetIndex, setPresetIndex] = useState(0);
+    const activePreset = { ambient: "#ffd86b", spot: "#ffcc00" };
     const [showTreeInfo, setShowTreeInfo] = useState(false);
     const [showImageCard, setShowImageCard] = useState(false);
-    const activePreset = lightPresets[presetIndex];
-
-    const handleNextLight = () => {
-        setPresetIndex((current) => (current + 1) % lightPresets.length);
-    };
 
     return(
        <section style={{width: '100%', height: '100vh', position: 'relative'}}>
-        <Button label={activePreset.name} onChangeLight={handleNextLight} className="fixed justify-end"/>
                 <FrontModel
                     ambientColor={activePreset.ambient}
                     spotColor={activePreset.spot}
