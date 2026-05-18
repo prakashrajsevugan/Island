@@ -5,8 +5,9 @@ Command: npx gltfjsx@6.5.3 new.glb
 import { useEffect, useRef, useState } from 'react'
 import React from 'react'
 import { useGLTF, useTexture } from '@react-three/drei'
+import * as THREE from 'three'
 
-export function New({ onDisplayClick, ...props }) {
+export function New({ onDisplayClick, showSea = true, ...props }) {
   const { nodes, materials } = useGLTF('/models/new.glb')
   const displayImageTexture = useTexture('/images/alt2.png')
   const IMAGE_ROTATION_DEG = 270
@@ -138,7 +139,7 @@ export function New({ onDisplayClick, ...props }) {
       <mesh geometry={nodes.Icosphere.geometry} material={materials.rock} position={[30.594, -2.462, 36.677]} scale={6.348} />
       <mesh geometry={nodes.Icosphere001.geometry} material={materials.rock} position={[25.485, 21.398, 52.663]} scale={[4.596, 3.443, 3.58]} />
       <mesh geometry={nodes.Icosphere002.geometry} material={materials.rock} position={[40.772, -8.341, 33.28]} scale={[6.168, 7.045, 6.407]} />
-      <mesh geometry={nodes.Cube064.geometry} material={materials.water} position={[23.93, -5.659, 7.971]} scale={[307.097, 49.136, 307.097]} />
+      {showSea && <mesh geometry={nodes.Cube064.geometry} material={materials.water} position={[23.93, -5.659, 7.971]} scale={[307.097, 49.136, 307.097]} />}
       <mesh geometry={nodes.Cube065.geometry} material={materials['stone payment']} position={[68.89, 49.517, 25.404]} scale={[3.503, 2.969, 2.989]} />
       <mesh geometry={nodes.Cube066.geometry} material={materials['stone payment']} position={[78.603, 49.517, 25.404]} scale={[4.96, 2.969, 2.927]} />
       <mesh geometry={nodes.Cube067.geometry} material={materials['stone payment']} position={[59.269, 49.517, 25.404]} scale={[4.96, 2.969, 3.116]} />

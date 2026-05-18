@@ -5,6 +5,14 @@ const Front = () =>{
     const activePreset = { ambient: "#ffd86b", spot: "#ffcc00" };
     const [showTreeInfo, setShowTreeInfo] = useState(false);
     const [showImageCard, setShowImageCard] = useState(false);
+    const skyConfig = {
+        scale: 100,
+        turbidity: 10,
+        rayleigh: 3,
+        mieCoefficient: 0.1,
+        mieDirectionalG: 0.95,
+        sunPosition: [0.3, -0.038, -0.95],
+    };
 
     return(
        <section style={{width: '100%', height: '100vh', position: 'relative'}}>
@@ -13,6 +21,7 @@ const Front = () =>{
                     spotColor={activePreset.spot}
                     onTreeProximityChange={setShowTreeInfo}
                     onDisplayClick={() => setShowImageCard(true)}
+                    skyConfig={skyConfig}
                 />
                 {showImageCard && (
                     <div
